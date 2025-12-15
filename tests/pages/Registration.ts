@@ -1,5 +1,6 @@
 import { Page } from "@playwright/test";
 import * as EmailUtils from "../utils/EmailUtils";
+import { saveRegistration } from "../utils/CSV_append.ts";
 
 let faker: any;
 
@@ -22,7 +23,7 @@ export async function getTestValues() {
     state: faker.location.state(),
     country: "US",
     phone: '111333222',
-    password: "Password123!"
+    password: "BabYK0ala!"
   };
 }
 
@@ -52,4 +53,12 @@ export async function registerUser(page: Page) {
   await page.locator('[data-test="password"]').click();
   await page.locator('[data-test="password"]').fill(testValues.password);
   await page.locator('[data-test="register-submit"]').click();
+  await page.waitForURL("https://practicesoftwaretesting.com/auth/login");
+
+  saveRegistration({
+    first_name: testValues.first_name,
+    last_name: testValues.last_name,
+    email: inbox.emailAddress,
+    createdAt: new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })
+  });
 }
