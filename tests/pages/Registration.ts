@@ -1,35 +1,15 @@
 import { Page } from "@playwright/test";
-import * as EmailUtils from "../utils/EmailUtils";
 import { saveRegistration } from "../utils/CSV_append.ts";
+import * as faker from "../utils/RandomDataGen.ts"
 
-let faker: any;
-
-async function initializeFaker() {
-  const fakerModule = await import("@faker-js/faker");
-  faker = fakerModule.faker;
-}
-
-export async function getTestValues() {
-  if (!faker) {
-    await initializeFaker();
-  }
-  return {
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    dob: "2001-06-15",
-    street: faker.location.streetAddress(),
-    postal_code: faker.location.zipCode(),
-    city: faker.location.city(),
-    state: faker.location.state(),
-    country: "US",
-    phone: '111333222',
-    password: "BabYK0ala!"
-  };
-}
+/**
+ * Registers a user on the registration page using test data.
+ * email is randomly generated and we have no access to it's inbox,
+ * so we cannot verify email confirmation.
+ */
 
 export async function registerUser(page: Page) {
-  const testValues = await getTestValues();
-  const inbox = await EmailUtils.createInbox();
+  const testValues = await faker.getTestValues();
   await page.goto("https://practicesoftwaretesting.com/auth/register");
   await page.locator('[data-test="first-name"]').click();
   await page.locator('[data-test="first-name"]').fill(testValues.first_name);
@@ -49,7 +29,7 @@ export async function registerUser(page: Page) {
   await page.locator('[data-test="phone"]').click();
   await page.locator('[data-test="phone"]').fill(testValues.phone);
   await page.locator('[data-test="email"]').click();
-  await page.locator('[data-test="email"]').fill(inbox.emailAddress);
+  await page.locator('[data-test="email"]').fill(testValues.emailAddress);
   await page.locator('[data-test="password"]').click();
   await page.locator('[data-test="password"]').fill(testValues.password);
   await page.locator('[data-test="register-submit"]').click();
@@ -58,7 +38,11 @@ export async function registerUser(page: Page) {
   saveRegistration({
     first_name: testValues.first_name,
     last_name: testValues.last_name,
-    email: inbox.emailAddress,
+    email: testValues.emailAddress,
     createdAt: new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })
   });
+}
+
+export async function registerUserWithInvalidData(page: Page) {
+
 }
