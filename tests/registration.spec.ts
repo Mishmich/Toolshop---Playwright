@@ -1,8 +1,11 @@
 import {test, expect} from '@playwright/test';
 import * as registration from './pages/Registration.ts';
 
-test('Register a client with valid data', async ({page}) => {
+test.beforeEach(async ({page}) => {
     await page.goto('/auth/registration');
+});
+
+test('Register a client with valid data', async ({page}) => {
     await registration.registerUser(page);
 });
 

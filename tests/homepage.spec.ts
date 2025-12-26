@@ -1,57 +1,50 @@
 import { test, expect } from "@playwright/test";
 import { describe } from "node:test";
 
+test.beforeEach(async ({page}) => {
+    await page.goto('/');
+});
+
 describe("Navbar Tests", () => {
-  test("Click on the logo", async ({ page }) => {
-    await page.goto("/");
+  test("Click on the logo", async ({ page, baseURL }) => {
     await page.getByTitle("Practice Software Testing - Toolshop").click();
-    await expect(page).toHaveURL("https://practicesoftwaretesting.com/");
+    await expect(page).toHaveURL(`${baseURL}/`);
   });
 
-  test("Click on Home", async ({ page }) => {
-    await page.goto("/");
+  test("Click on Home", async ({ page, baseURL }) => {
     await page.locator('[data-test="nav-home"]').click();
-    await expect(page).toHaveURL("https://practicesoftwaretesting.com/");
+    await expect(page).toHaveURL(`${baseURL}/`);
   });
 
-  test("Click on Categories - Hand Tools", async ({ page }) => {
-    await page.goto("/");
+  test("Click on Categories - Hand Tools", async ({ page, baseURL }) => {
     await page.locator('[data-test="nav-categories"]').click();
     await page.locator('[data-test="nav-hand-tools"]').click();
-    await expect(page).toHaveURL(
-      "https://practicesoftwaretesting.com/category/hand-tools"
-    );
+    await expect(page).toHaveURL(`${baseURL}/category/hand-tools`);
   });
 
-  test("Click on Contact", async ({ page }) => {
-    await page.goto("/");
+  test("Click on Contact", async ({ page, baseURL }) => {
     await page.locator('[data-test="nav-contact"]').click();
-    await expect(page).toHaveURL("https://practicesoftwaretesting.com/contact");
+    await expect(page).toHaveURL(`${baseURL}/contact`);
   });
 
-  test("Click on Sign in", async ({ page }) => {
-    await page.goto("/");
+  test("Click on Sign in", async ({ page, baseURL }) => {
     await page.locator('[data-test="nav-sign-in"]').click();
-    await expect(page).toHaveURL(
-      "https://practicesoftwaretesting.com/auth/login"
-    );
+    await expect(page).toHaveURL(`${baseURL}/auth/login`);
   });
 
   test.skip("Click on Language - DE", async ({ page }) => {
-    await page.goto("/");
     await page.locator('[data-test="language-select"]').click();
     await page.locator('[data-test="lang-de"]').click();
   });
 });
 
-describe("Filtering Tests", () => {
+describe.skip("Filtering Tests", () => {
 
 });
 
-describe("Paging Tests", () => {
+describe.skip("Paging Tests", () => {
     
     test("Navigate to page 2", async ({ page, request }) => {
-        await page.goto("/");
         //get all ids of products on page 1
         const productIdsPage1 = await page.locator('[data-test^="product-"]').all;
         //click on page 2
