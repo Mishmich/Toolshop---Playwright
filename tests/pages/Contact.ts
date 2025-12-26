@@ -20,6 +20,9 @@ export async function fillOutContactForm(page: Page) {
 
   await page.locator('[data-test="message"]').click();
   await page.locator('[data-test="message"]').fill(testValues.message);
+}
+
+export async function submitContactForm(page: Page) {
   await page.locator('[data-test="contact-submit"]').click();
 }
 
@@ -28,4 +31,16 @@ export async function checkSubmissionText(page: Page) {
   await expect(page.getByRole("alert")).toContainText(
     "Thanks for your message! We will contact you shortly."
   );
+}
+
+export async function checkValidationErrors(page: Page, arg1: string[]) {
+    for (const field of arg1) {
+        const errorLocator = page.locator(`[data-test="${field}-error"]`);
+        await expect(errorLocator).toBeVisible();
+    }
+}
+
+export async function addAttachment(page: Page, attachmentPath: string) {
+  await page.locator('[data-test="attachment"]').click();
+  await page.locator('[data-test="attachment"]').setInputFiles(attachmentPath);
 }
