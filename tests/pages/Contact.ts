@@ -47,3 +47,7 @@ export async function addAttachment(page: Page, attachmentPath: string) {
   await page.locator('[data-test="attachment"]').click();
   await page.locator('[data-test="attachment"]').setInputFiles(resolvedPath);
 }
+
+export async function checkUrl(page: Page, baseURL: string) {
+  await expect(page).toHaveURL(`${baseURL}/contact`);
+}
