@@ -1,5 +1,4 @@
 import { Page, expect } from "@playwright/test";
-import path from 'path';
 
 export const testValues = {
   first_name: "John",
@@ -42,10 +41,8 @@ export async function checkValidationErrors(page: Page, arg1: string[]) {
 }
 
 export async function addAttachment(page: Page, attachmentPath: string) {
-  // Resolve relative path from project root
-  const resolvedPath = path.resolve(__dirname, '../../', attachmentPath);
   await page.locator('[data-test="attachment"]').click();
-  await page.locator('[data-test="attachment"]').setInputFiles(resolvedPath);
+  await page.locator('[data-test="attachment"]').setInputFiles(attachmentPath);
 }
 
 export async function checkUrl(page: Page, baseURL: string) {

@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import * as contact from './pages/Contact.ts';
+import path from 'path';
 
 
 test.beforeEach(async ({page, baseURL}) => {
@@ -27,14 +28,14 @@ test('Submit contact form with invalid email', { tag: '@negative'}, async ({page
 
 test('Submit contact form with valid attachment', { tag: '@positive'}, async ({page}) => {
     await contact.fillOutContactForm(page);
-    await contact.addAttachment(page, 'tests/data/attachments/validAttachmentFile.txt');
+    await contact.addAttachment(page, path.join(__dirname, '\\data\\attachments\\validAttachmentFile.txt'));
     await contact.submitContactForm(page);
     await contact.checkSubmissionText(page);
 });
 
 test('Submit contact form with invalid attachment', { tag: '@negative'}, async ({page}) => {
     await contact.fillOutContactForm(page);
-    await contact.addAttachment(page, 'tests/data/attachments/invalidAttachmentFile.txt');
+    await contact.addAttachment(page, path.join(__dirname, '\\data\\attachments\\invalidAttachmentFile.txt'));
     await contact.submitContactForm(page);
     await contact.checkValidationErrors(page, ['attachment']);
 });
