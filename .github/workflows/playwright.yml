@@ -6,6 +6,12 @@ on:
     branches: [ main ]
   schedule:
     - cron: '0 0 * * 0'  # Run every Sunday at midnight UTC
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     timeout-minutes: 60
