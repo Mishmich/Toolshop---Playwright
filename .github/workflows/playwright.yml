@@ -4,10 +4,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'  # Run every Sunday at midnight UTC
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -19,9 +21,13 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
-    - uses: actions/upload-artifact@v4
+      continue-on-error: true
+    - name: Upload Playwright Report to GitHub Pages
       if: ${{ !cancelled() }}
+      uses: actions/upload-pages-artifact@v3
       with:
-        name: playwright-report
         path: playwright-report/
-        retention-days: 30
+    - name: Deploy to GitHub Pages
+      if: ${{ !cancelled() }}
+      id: deployment
+      uses: actions/deploy-pages@v4
