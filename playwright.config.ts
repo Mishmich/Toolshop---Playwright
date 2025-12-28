@@ -25,10 +25,6 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'https://practicesoftwaretesting.com',
-    //baseURL: 'https://with-bugs.practicesoftwaretesting.com/#',
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     //headless: false,
@@ -40,8 +36,17 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'],
+      name: 'chromium-production',
+      use: { 
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://practicesoftwaretesting.com',
+      },
+    },
+    {
+      name: 'chromium-buggy',
+      use: { 
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://with-bugs.practicesoftwaretesting.com/#',
       },
     },
 
