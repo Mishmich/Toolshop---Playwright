@@ -8,6 +8,5 @@ node_modules/
 /playwright/.auth/
 .env
 /.vscode/
-/tests/UI/
 /scripts/
 /tests/data/registrations.csv
