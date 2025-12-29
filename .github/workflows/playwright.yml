@@ -37,3 +37,6 @@ jobs:
       if: ${{ !cancelled() }}
       id: deployment
       uses: actions/deploy-pages@v4
+    - name: Add link to summary
+      if: ${{ !cancelled() }}
+      run: echo "📊 [View Playwright Report](https://mishmich.github.io/Toolshop---Playwright/)" >> $GITHUB_STEP_SUMMARY
