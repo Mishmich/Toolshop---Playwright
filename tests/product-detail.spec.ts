@@ -10,3 +10,11 @@ test('Add item to cart', async ({ page }) => {
   let alertText = await page.getByRole('alert', { name: 'Product added to shopping' }).getAttribute('aria-label');
   await expect(alertText).toContain('Product added to shopping cart.');
 });
+
+test('Decrease item quantity', async ({ page }) => {});
+
+test('Add item to favorites - unauthorized', async ({ page }) => {});
+
+test('Add item to favorites - authorized', async ({ page }) => {});
+
+test('Click on related product', async ({ page }) => {});

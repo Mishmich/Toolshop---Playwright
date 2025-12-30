@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { describe } from "node:test";
+import { checkLanguageChange } from "./pages/Home.ts";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
@@ -32,14 +33,27 @@ describe("Navbar Tests", () => {
     await expect(page).toHaveURL(`${baseURL}/auth/login`);
   });
 
-  test.skip("Click on Language - DE", async ({ page }) => {
+  test("Click on Language - DE", async ({ page }) => {
     await page.locator('[data-test="language-select"]').click();
     await page.locator('[data-test="lang-de"]').click();
+    await checkLanguageChange(page);
   });
 });
 
-describe.skip("Filtering Tests", () => {
+describe.skip("Sorting Tests", () => {
+    test("Sort by name A-Z", async ({ page }) => {});
+    test("Sort by name Z-A", async ({ page }) => {});
+    test("Sort by price low to high", async ({ page }) => {});
+    test("Sort by price high to low", async ({ page }) => {});
+});
 
+describe.skip("Filtering Tests", () => {
+    test("Filter by price range 0-50", async ({ page }) => {});
+    test("Filter by price range 100-200", async ({ page }) => {});
+    test("Search by text - 'saw'", async ({ page }) => {});
+    test("Filter by category - check Hand Tools", async ({ page }) => {});
+    test("Filter by category - check Dril", async ({ page }) => {});
+    test("Combination of filtering - Safety Gear, A-Z, range 0-30, 'ggl'", async ({ page }) => {});
 });
 
 describe.skip("Paging Tests", () => {

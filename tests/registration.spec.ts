@@ -9,6 +9,12 @@ test('Register a client with valid data', async ({page}) => {
     await registration.registerUser(page);
 });
 
-test('Register a client with invalid data', async ({page}) => {
+test('Submit empty registration form', async ({page}) => {
 
 });
+
+test('Register with already used email', async ({page}) => {});
+
+test('Register with invalid password', async ({page}) => {});
+
+test('Make password visible', async ({page}) => {});
