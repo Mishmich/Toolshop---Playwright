@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { describe } from "node:test";
-import { checkLanguageChange } from "./pages/Home.ts";
+import { checkLanguageChange, clickOnNthPageNumber, getProductDetails } from "./pages/Home.ts";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
@@ -56,16 +56,29 @@ describe.skip("Filtering Tests", () => {
     test("Combination of filtering - Safety Gear, A-Z, range 0-30, 'ggl'", async ({ page }) => {});
 });
 
-describe.skip("Paging Tests", () => {
+describe("Paging Tests", () => {
     
-    test("Navigate to page 2", async ({ page, request }) => {
-        //get all ids of products on page 1
-        const productIdsPage1 = await page.locator('[data-test^="product-"]').all;
-        //click on page 2
-        await page.getByRole("button", {name: "2"}).click();
-        //get all ids of products on page 2
-        const productIdsPage2 = await page.locator('[data-test^="product-"]').all;
-        //compare that the two pages have different products
-        expect(productIdsPage1).not.toEqual(productIdsPage2);
+    test("Page 2 shows different products than page 1", async ({ page }) => {
+        // Get products on page 1
+        const page1Products = await getProductDetails(page);
+        const page1Ids = page1Products.map(p => p.id);
+        
+        await expect(page1Ids.length).toBeGreaterThan(0);
+        
+        // Navigate to page 2
+        await clickOnNthPageNumber(page, 2);
+        
+        // Get products on page 2
+        const page2Products = await getProductDetails(page);
+        const page2Ids = page2Products.map(p => p.id);
+        
+        await expect(page2Ids.length).toBeGreaterThan(0);
+        
+        // Products should be completely different
+        await expect(page1Ids).not.toEqual(page2Ids);
+        
+        // No overlap between pages
+        const overlap = page1Ids.filter(id => page2Ids.includes(id));
+        await expect(overlap.length).toBe(0);
     });
 });
