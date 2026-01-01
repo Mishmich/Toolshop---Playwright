@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { describe } from "node:test";
-import { checkLanguageChange, clickOnNthPageNumber, getProductDetails } from "./pages/Home.ts";
+import * as home from "./pages/Home.ts";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
@@ -36,15 +36,43 @@ describe("Navbar Tests", () => {
   test("Click on Language - DE", async ({ page }) => {
     await page.locator('[data-test="language-select"]').click();
     await page.locator('[data-test="lang-de"]').click();
-    await checkLanguageChange(page);
+    await home.checkLanguageChange(page);
   });
 });
 
-describe.skip("Sorting Tests", () => {
-    test("Sort by name A-Z", async ({ page }) => {});
-    test("Sort by name Z-A", async ({ page }) => {});
-    test("Sort by price low to high", async ({ page }) => {});
-    test("Sort by price high to low", async ({ page }) => {});
+describe("Sorting Tests", () => {
+
+    test("Sort by name A-Z", async ({ page }) => {
+      await home.sortByOption(page, 'name,asc');
+      const products = await home.getProductDetails(page);
+      const sortedProducts = [...products];
+      sortedProducts.sort((a, b) => (a.name! > b.name!) ? 1 : -1);
+      await expect(sortedProducts).toEqual(products);
+    });
+
+    test("Sort by name Z-A", async ({ page }) => {
+      await home.sortByOption(page, 'name,desc');
+      const products = await home.getProductDetails(page);
+      const sortedProducts = [...products];
+      sortedProducts.sort((a, b) => (a.name! < b.name!) ? 1 : -1);
+      await expect(sortedProducts).toEqual(products);
+    });
+
+    test("Sort by price low to high", async ({ page }) => {
+      await home.sortByOption(page, 'price,asc');
+      const products = await home.getProductDetails(page);
+      const sortedProducts = [...products];
+      sortedProducts.sort((a, b) => (a.price! > b.price!) ? 1 : -1);
+      await expect(sortedProducts).toEqual(products);
+    });
+
+    test("Sort by price high to low", async ({ page }) => {
+      await home.sortByOption(page, 'price,desc');
+       const products = await home.getProductDetails(page);
+      const sortedProducts = [...products];
+      sortedProducts.sort((a, b) => (a.price! < b.price!) ? 1 : -1);
+      expect(sortedProducts).toEqual(products);
+    });
 });
 
 describe.skip("Filtering Tests", () => {
@@ -60,16 +88,16 @@ describe("Paging Tests", () => {
     
     test("Page 2 shows different products than page 1", async ({ page }) => {
         // Get products on page 1
-        const page1Products = await getProductDetails(page);
+        const page1Products = await home.getProductDetails(page);
         const page1Ids = page1Products.map(p => p.id);
         
         await expect(page1Ids.length).toBeGreaterThan(0);
         
         // Navigate to page 2
-        await clickOnNthPageNumber(page, 2);
+        await home.clickOnNthPageNumber(page, 2);
         
         // Get products on page 2
-        const page2Products = await getProductDetails(page);
+        const page2Products = await home.getProductDetails(page);
         const page2Ids = page2Products.map(p => p.id);
         
         await expect(page2Ids.length).toBeGreaterThan(0);

@@ -41,7 +41,7 @@ export async function clickOnNthPageNumber(page: Page, n: number) {
 }
 
 export async function sortByOption(page: Page, optionValue: string) {
-    await page.locator('[data-test="sort-select"]').selectOption(optionValue);
+    await page.locator('[data-test="sort"]').selectOption(optionValue);
 }
 
 export async function getProductDetails(page: Page): Promise<Product[]> {
@@ -55,4 +55,3 @@ export async function getProductDetails(page: Page): Promise<Product[]> {
     }))
   );
 }
-
