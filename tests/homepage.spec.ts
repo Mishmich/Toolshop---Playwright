@@ -75,9 +75,6 @@ describe("Sorting Tests", () => {
 });
 
 describe("Filtering Tests", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-  });
 
   test("Filter by price range 0-50", async ({ page }) => {
     await home.moveSliderTo(page, "right", 50);
@@ -95,12 +92,12 @@ describe("Filtering Tests", () => {
     expect(products[0].price!.slice(1) >= "100" && products[products.length - 1].price!.slice(1) <= "200").toBeTruthy();
   });
 
-  test("Search by text - 'saw'", async ({ page }) => {
-    await page.locator('[data-test="search-query"]').fill("saw");
-    await page.locator('[data-test="search-submit"]').click();
+  test("Search by text - 'hammer'", async ({ page }) => {
+    await page.locator('[data-test="search-query"]').fill("hammer");
+    await home.submitSearch(page);
     const products = await home.getProductDetails(page);
     for (const product of products) {
-      expect(product.name!.toLowerCase().includes("saw")).toBeTruthy();
+      expect(product.name!.toLowerCase().includes("hammer")).toBeTruthy();
     }
   });
 
