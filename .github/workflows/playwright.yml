@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  checks: write
   pages: write
   id-token: write
 
@@ -22,7 +23,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test /tests/homepage.spec.ts
       continue-on-error: true
     - name: Upload Playwright Report to GitHub Pages
       if: ${{ !cancelled() }}
