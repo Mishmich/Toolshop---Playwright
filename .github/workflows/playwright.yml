@@ -33,6 +33,11 @@ jobs:
       if: ${{ !cancelled() }}
       id: deployment
       uses: actions/deploy-pages@v4
-    - name: Add link to summary
-      if: ${{ !cancelled() }}
-      run: echo "📊 [View Playwright Report](https://mishmich.github.io/Toolshop---Playwright/)" >> $GITHUB_STEP_SUMMARY
+    - name: Test Report
+      uses: phoenix-actions/test-reporting@v8
+      id: test-report               # Set ID reference for step
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: JEST Tests            # Name of the check run which will be created
+        path: reports/jest-*.xml    # Path to test results
+        reporter: jest-junit        
