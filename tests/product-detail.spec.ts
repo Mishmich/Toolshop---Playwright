@@ -4,7 +4,7 @@ import { loginUser, removeAllFaves } from "./pages/Login.ts";
 
 test.describe("Unauthorized user tests", () => {
   test.beforeEach(async ({ page, baseURL }) => {
-    await page.goto("/");
+    await page.goto(`${baseURL}/`);
     await productDetail.goToProductDetail(page, baseURL!, 0); // Navigate to the first product detail page
   });
   test("Add item to cart", async ({ page }) => {

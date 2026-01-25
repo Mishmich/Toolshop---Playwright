@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 import { describe } from "node:test";
 import * as home from "./pages/Home.ts";
 
-test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+test.beforeEach(async ({ page, baseURL }) => {
+  await page.goto(`${baseURL}/`);
 });
 
 describe("Navbar Tests", () => {

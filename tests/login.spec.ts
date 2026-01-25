@@ -1,8 +1,8 @@
 import {test} from '@playwright/test';
 import * as login from './pages/Login.ts';
 
-test.beforeEach(async ({page}) => {
-    await page.goto('/auth/login');
+test.beforeEach(async ({page, baseURL}) => {
+    await page.goto(`${baseURL}/auth/login`);
 });
 
 test('Sign in with valid credentials', { tag: '@positive'}, async ({page}) => {
