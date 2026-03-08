@@ -23,7 +23,12 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
+    - name: Run Playwright tests - Smoke (push only)
+      if: ${{ github.event_name == 'push' }}
+      run: npx playwright test --grep @positive
+      continue-on-error: true
+    - name: Run Playwright tests - Full suite (schedule & manual)
+      if: ${{ github.event_name != 'push' }}
       run: npx playwright test
       continue-on-error: true
     - name: Publish Test Results
