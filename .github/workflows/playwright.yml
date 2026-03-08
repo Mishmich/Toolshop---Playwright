@@ -57,7 +57,7 @@ jobs:
       run: npx playwright install
     - name: Run Playwright tests - Smoke (push only)
       if: ${{ github.event_name == 'push' }}
-      run: npx playwright test --grep '@positive'
+      run: npx playwright test --grep '@smoke'
       continue-on-error: true
     - name: Run Playwright tests - Full suite (schedule & manual)
       if: ${{ github.event_name != 'push' }}
