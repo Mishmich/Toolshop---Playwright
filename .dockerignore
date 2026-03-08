@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+playwright-report
+test-results
+.git
+.github
+.env
+playwright-report/
+.playwright/
+/scripts/
+/tests/data/registrations.csv
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+/.vscode/
