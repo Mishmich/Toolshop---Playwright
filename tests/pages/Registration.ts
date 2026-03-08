@@ -31,7 +31,7 @@ export async function fillRegistrationForm(page: Page) {
   await page.locator('[data-test="email"]').click();
   await page.locator('[data-test="email"]').fill(testValues.emailAddress);
   await page.locator('[data-test="password"]').click();
-  await page.locator('[data-test="password"]').fill(testValues.password);
+  await page.locator('[data-test="password"]').fill("YOGAmatt555!");
 }
 
 
@@ -47,7 +47,7 @@ export async function clickOnSubmitButton(page: Page) {
 
 }
 
-export async function registerUserwithMailSlurp(page: Page, email: string) {
+export async function registerUserwithTestmail(page: Page, email: string) {
     await fillRegistrationForm(page);
     await page.locator('[data-test="email"]').click();
     await page.locator('[data-test="email"]').fill(email);
