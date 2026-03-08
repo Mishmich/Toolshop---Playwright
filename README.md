@@ -1,4 +1,4 @@
-# Toolshop — Playwright Test Automation
+# Toolshop Test — Playwright Test Automation
 
 A comprehensive Playwright-based test automation suite for https://practicesoftwaretesting.com/ covering functional testing, E2E workflows, API testing, and visual regression.
 
@@ -7,59 +7,77 @@ A comprehensive Playwright-based test automation suite for https://practicesoftw
 ```
 c:\Data\pst_PW_test\
 ├── tests/
-│   ├── pages/                  # Page Object Models
+│   ├── pages/                      # Page Object Models
 │   │   ├── Home.ts
 │   │   ├── Login.ts
 │   │   ├── Registration.ts
 │   │   ├── Contact.ts
+│   │   ├── ProductDetail.ts
 │   │   └── Checkout.ts
 │   ├── utils/
-│   │   ├── CSV_append.ts       # CSV data persistence
-│   │   └── EmailUtils.ts       # Email utilities
+│   │   ├── CSV_append.ts           # CSV data persistence
+│   │   ├── EmailUtils.ts           # Email utilities (testmail.app integration)
+│   │   └── RandomDataGen.ts        # Faker-based test data generation
 │   ├── data/
-│   │   └── registrations.csv   # Generated test user records
+│   │   ├── registrations.csv       # Generated test user records
+│   │   └── attachments/            # Test files for upload testing
 │   ├── E2E/
-│   │   └── product-flow.spec.ts       # End-to-end user journey
-│   ├── API/                    # API test suite
+│   │   ├── product-flow.spec.ts    # End-to-end product purchase journey
+│   │   └── forgottenPassword-flow.spec.ts
+│   ├── API/
+│   │   ├── products.api.spec.ts    # Product endpoint tests
+│   │   ├── cart.api.spec.ts        # Cart endpoint tests
+│   │   └── users.api.spec.ts       # User endpoint tests
 │   ├── UI/
-│   │   ├── __screenshots__/    # Visual regression baselines
-│   │   ├── playwright.config.ts
-│   │   ├── home.spec.ts
-│   │   ├── login.spec.ts
-│   │   └── about.spec.ts
-│   ├── check-out.spec.ts
-│   ├── contact.spec.ts
-│   ├── homepage.spec.ts
-│   ├── login.spec.ts
-│   ├── product-detail.spec.ts
-│   └── registration.spec.ts
-├── scripts/
-│   └── create-files-from-json.js   # File generation utility
-├── playwright.config.ts        # Main Playwright configuration
-├── playwright-report/          # HTML test reports
-├── test-results/               # Test artifacts
+│   │   ├── ui-home.spec.ts         # Visual regression tests
+│   │   ├── ui-login.spec.ts
+│   │   ├── ui-registration.spec.ts
+│   │   ├── ui-contact.spec.ts
+│   │   ├── ui-product-detail.spec.ts
+│   │   ├── ui-check-out.spec.ts
+│   │   └── *-snapshots/            # Visual regression baselines
+│   ├── check-out.spec.ts           # Checkout functional tests
+│   ├── contact.spec.ts             # Contact form functional tests
+│   ├── homepage.spec.ts            # Homepage functional tests
+│   ├── login.spec.ts               # Login functional tests
+│   ├── product-detail.spec.ts      # Product detail functional tests
+│   └── registration.spec.ts        # Registration functional tests
+├── .github/
+│   └── workflows/
+│       └── playwright.yml          # CI/CD pipeline (runs on push & schedule)
+├── playwright.config.ts            # Main Playwright configuration
+├── playwright-report/              # HTML test reports
+├── test-results/
+│   └── junit.xml                   # JUnit format results
 ├── package.json
 └── README.md
 ```
 
 ## Features
 
-- **Page Object Model (POM)**: Organized page classes for maintainability and reusability.
-- **Functional Tests**: Coverage for login, registration, product browsing, checkout, and contact forms.
-- **E2E Tests**: Complete user journeys (e.g., product flow from browsing to checkout).
-- **API Tests**: Backend endpoint validation.
-- **Visual Regression**: Full-page screenshot comparisons to detect unintended UI changes.
-- **Data Persistence**: Test user registration logged to CSV for auditing and reuse.
-- **Email Utilities**: Support for email-based workflows and verification.
+- **Page Object Model (POM)**: Organized page classes with reusable selectors and actions for maintainability
+- **Functional Tests**: Coverage for login, registration, product browsing, checkout, and contact forms
+- **E2E Tests**: Complete user journeys (product-flow, forgotten-password flows)
+- **API Tests**: Backend endpoint validation (products, cart, users)
+- **Visual Regression**: Full-page screenshot comparisons using UI tests
+- **Email Integration**: testmail.app support for email-based workflows with code extraction
+- **Test Data Generation**: Faker.js for realistic random test data
+- **CSV Logging**: Automatic registration data persistence for audit trails
+- **CI/CD Ready**: GitHub Actions workflow with JUnit and HTML reporting
 
 ## Installation
 
-1. Clone or download the project.
+1. Clone or download the project
 2. Install dependencies:
    ```
    npm install
    ```
-3. Install Playwright browsers (one-time):
+3. Set up environment variables (create `.env` file):
+   ```
+   TESTMAIL_API_KEY=your_testmail_api_key_here
+   TESTMAIL_NAMESPACE=your_namespace_here
+   ```
+4. Install Playwright browsers:
    ```
    npx playwright install
    ```
@@ -68,7 +86,7 @@ c:\Data\pst_PW_test\
 
 ### Run all tests
 ```
-npx playwright test
+npm test
 ```
 
 ### Run specific test file
@@ -76,24 +94,21 @@ npx playwright test
 npx playwright test tests/login.spec.ts
 ```
 
-### Run tests by folder
+### Run tests by category
 ```
-npx playwright test tests/E2E/
-npx playwright test tests/UI/
-npx playwright test tests/API/
-```
-
-### Run UI visual regression tests
-```
-npx playwright test --config=tests/UI/playwright.config.ts
+npx playwright test tests/E2E/           # E2E tests
+npx playwright test tests/API/           # API tests
+npx playwright test tests/UI/            # Visual regression tests
+npx playwright test --grep @positive     # By tag
 ```
 
-### Update visual baselines (after intentional design changes)
+### Run with specific browser project
 ```
-npx playwright test --config=tests/UI/playwright.config.ts --update-snapshots
+npx playwright test --project=chromium-production
+npx playwright test --project=chromium-buggy
 ```
 
-### Run in debug mode (interactive)
+### Debug mode (interactive)
 ```
 npx playwright test --debug
 ```
@@ -105,183 +120,242 @@ npx playwright show-report
 
 ## Test Data & CSV Logging
 
-When you run registration or sign-up tests, credentials are automatically saved to `tests/data/registrations.csv` with columns:
-- email
-- firstName
-- lastName
-- createdAt (Central European Time)
+When registration tests run, credentials are automatically saved to `tests/data/registrations.csv` with columns:
+- `first_name`
+- `last_name`
+- `email`
+- `createdAt`
 
-**Example workflow:**
+### Usage:
 ```typescript
-import { saveRegistration } from './utils/CSV_append';
-import { generateEmail } from './utils/EmailUtils';
+import { saveToCsv, saveRegistration } from './utils/CSV_append';
+import { getTestValues } from './utils/RandomDataGen';
 
 test('register new user', async ({ page }) => {
-  const email = generateEmail();
+  const testData = await getTestValues();
   
-  // ... fill registration form ...
-  
-  const cetDate = new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' });
+  // ... fill registration form with testData ...
   
   saveRegistration({
-    email: email,
-    firstName: 'Test',
-    lastName: 'User',
-    createdAt: cetDate
+    first_name: testData.first_name,
+    last_name: testData.last_name,
+    email: testData.emailAddress,
+    createdAt: new Date().toISOString()
   });
 });
 ```
 
-**Add to .gitignore to avoid committing real test data:**
-```
-tests/data/
-```
-
 ## Page Object Models
 
-Located in `tests/pages/`, these classes encapsulate selectors and actions for each page:
+Located in `tests/pages/`, these classes encapsulate selectors and actions:
 
+- **Home.ts** - Homepage navigation and interactions
+- **Login.ts** - Login form and authentication
+- **Registration.ts** - Registration form and user creation
+- **Contact.ts** - Contact form handling
+- **ProductDetail.ts** - Product page interactions
+- **Checkout.ts** - Checkout flow and payment
+
+### Usage Example:
 ```typescript
-import { Home } from './pages/Home';
-import { Login } from './pages/Login';
+import { test } from '@playwright/test';
+import * as registration from './pages/Registration';
 
-test('user flow', async ({ page }) => {
-  const home = new Home(page);
-  const login = new Login(page);
-  
-  await home.navigate();
-  await home.clickLoginButton();
-  await login.fillEmail('user@example.com');
-  await login.fillPassword('password');
-  await login.submit();
+test('register user', async ({ page, baseURL }) => {
+  await page.goto(`${baseURL}/auth/register`);
+  await registration.fillRegistrationForm(page);
+  await registration.clickOnSubmitButton(page);
 });
 ```
 
 ## Key Utilities
 
-### saveRegistration() (CSV_append.ts)
-Logs test user data to CSV for auditing:
+### RandomDataGen.ts - Faker.js Integration
+Generate realistic test data using Faker.js:
 ```typescript
+import { getTestValues } from './utils/RandomDataGen';
+
+const testData = await getTestValues();
+// Returns: first_name, last_name, dob, street, postal_code, city, state, country, phone, emailAddress, password
+```
+
+### CSV_append.ts - Data Persistence
+Save test data to CSV files:
+```typescript
+import { saveToCsv, saveRegistration } from './utils/CSV_append';
+
 saveRegistration({
-  email: 'user@example.com',
-  firstName: 'John',
-  lastName: 'Doe',
-  createdAt: new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })
+  first_name: 'John',
+  last_name: 'Doe',
+  email: 'john@example.com',
+  createdAt: new Date().toISOString()
 });
 ```
 
-### EmailUtils (EmailUtils.ts)
-Utilities for email-based workflows, including generating unique test emails:
+### EmailUtils.ts - testmail.app Integration
+Handle email-based test workflows:
 ```typescript
-import { generateEmail } from './utils/EmailUtils';
+import {
+  generateTag,
+  getTestEmailAddress,
+  waitForEmail,
+  waitForEmailAndExtractCode,
+  extractCodeFromEmail
+} from './utils/EmailUtils';
 
-const email = generateEmail(); // Generates a unique email for testing
+const tag = generateTag();
+const emailAddress = getTestEmailAddress(tag); // namespace.tag@inbox.testmail.app
+
+// Send signup to emailAddress...
+
+// Wait for email and extract 6-digit code
+const code = await waitForEmailAndExtractCode(tag);
+if (code) {
+  // Use code in verification step
+} else {
+  console.log('Email timeout - handle gracefully');
+}
 ```
 
 ## Visual Regression Testing (UI/)
 
-The `tests/UI/` folder contains visual regression tests with full-page screenshots.
+The `tests/UI/` folder contains visual regression tests with full-page screenshot baselines.
+
+### Workflow:
 
 1. **Generate or update baselines** (run once per design change):
    ```
-   npx playwright test --config=tests/UI/playwright.config.ts --update-snapshots
+   npx playwright test tests/UI/ --update-snapshots
    ```
 
-2. **Commit baseline images** (so CI/team see expected state):
+2. **Commit baseline images**:
    ```
-   git add tests/UI/__screenshots__/
+   git add tests/UI/*-snapshots/
    ```
 
-3. **Run tests in CI** to catch visual regressions automatically:
+3. **Run tests in CI** to catch visual regressions:
    ```
-   npx playwright test --config=tests/UI/playwright.config.ts
+   npx playwright test tests/UI/
    ```
+
+Visual regression tests are stored in:
+- `ui-home.spec.ts-snapshots/`
+- `ui-login.spec.ts-snapshots/`
+- `ui-registration.spec.ts-snapshots/`
+- `ui-contact.spec.ts-snapshots/`
+- `ui-product-detail.spec.ts-snapshots/`
+- `ui-check-out.spec.ts-snapshots/`
 
 ## CI/CD Integration
 
-Example GitHub Actions workflow:
+GitHub Actions workflow (`.github/workflows/playwright.yml`) runs tests on:
+- **Push** (every commit)
+- **Schedule** (Sunday at midnight UTC)
+- **Manual trigger** (workflow_dispatch)
+
+### Features:
+- Runs on Windows latest
+- Parallel execution (4 workers locally, 1 on CI)
+- Automatic retry on CI (2 retries)
+- HTML, GitHub, and JUnit reports
+- Deployed to GitHub Pages
+
+### Configuration:
 ```yaml
 name: Playwright Tests
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install
-      - run: npx playwright install
-      - run: npx playwright test
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Sunday midnight UTC
+  workflow_dispatch:
+  push:                   # On every commit
 ```
 
 ## Configuration
 
-### playwright.config.ts (Main)
-- Base URL: https://practicesoftwaretesting.com/
-- Timeout: 30s per action
-- Retries: 2 (on failure)
-- Parallel execution: 4 workers
-- Screenshot on failure: enabled
+### playwright.config.ts
 
-### tests/UI/playwright.config.ts (UI Tests)
-- Test directory: ./UI
-- Viewport: 1280x720
-- Headless: true
-- Snapshot directory: __screenshots__
+**Test Projects:**
+- `chromium-production` - Tests against production environment
+- `chromium-buggy` - Tests against buggy version for practice
+
+**Base URL:** https://practicesoftwaretesting.com
+
+**Reporters:**
+- HTML (default)
+- GitHub (for CI)
+- JUnit (test-results/junit.xml)
+
+**Parallel Execution:**
+- Local: 4 workers (fullyParallel: true)
+- CI: 1 worker (sequential)
+
+**Retry Policy:**
+- Local: No retries
+- CI: 2 retries on failure
+
+**Tracing:**
+- Enabled on first retry for debugging
 
 ## Troubleshooting
 
 ### Tests timeout
-- Increase `actionTimeout` or `navigationTimeout` in playwright.config.ts
-- Check if the website is slow or down
+- Increase timeout in playwright.config.ts
+- Check if https://practicesoftwaretesting.com is accessible
 - Run with `--headed` to see what's happening: `npx playwright test --headed`
 
-### CSV file not being created
-- Ensure `tests/utils/CSV_append.ts` is imported correctly
-- Verify `tests/data/` directory exists and is writable
-- Check that the test calls `saveRegistration()` after user creation
+### CSV file not created
+- Ensure `tests/data/` directory exists and is writable
+- Verify `saveRegistration()` is called in the test
+- Check for file system permissions
+
+### Email tests timeout
+- Verify `TESTMAIL_API_KEY` and `TESTMAIL_NAMESPACE` are set in `.env`
+- Check testmail.app account for active inboxes
+- Allow up to 5 minutes for email delivery
 
 ### Visual regression snapshots fail
-- **Expected**: Design changes are intentional → update baselines: `--update-snapshots`
-- **Unexpected**: Run in headed mode to see visual differences: `npx playwright test --headed --config=tests/UI/playwright.config.ts`
-- Hide dynamic elements (timestamps, ads) before screenshots to avoid flaky tests
+- **Intentional UI changes**: Update baselines with `--update-snapshots`
+- **Unexpected**: Run `--headed` to visually inspect differences
+- Hide timestamps/dynamic content before snapshots to avoid flakiness
 
-### Tests fail with "Element not found"
-- Selectors may have changed in the website
+### Element not found errors
+- Selectors may have changed in the target website
 - Update selectors in the corresponding Page Object Model
-- Run in debug mode to inspect: `npx playwright test --debug`
+- Use `--debug` mode to inspect selectors
 
 ## Best Practices
 
-- ✅ Use Page Object Models to organize selectors and actions
-- ✅ Log test users to CSV for audit trails
-- ✅ Hide dynamic elements before visual regression snapshots
-- ✅ Commit visual baselines so CI catches regressions
-- ✅ Run tests in parallel (default: 4 workers)
-- ✅ Use meaningful test names and descriptions
-- ❌ Avoid committing CSV files with real user data
-- ❌ Avoid hardcoding credentials or test data
-- ❌ Avoid relying on test execution order (keep tests independent)
+✅ **Do:**
+- Use Page Object Models to organize selectors and actions
+- Generate random test data with Faker.js for realistic scenarios
+- Log test users to CSV for audit trails and reuse
+- Use meaningful test names and descriptions
+- Run tests in parallel for speed (default: 4 workers)
+- Tag tests for easy filtering (`@positive`, `@negative`, etc.)
+- Use email utilities for email-based verification flows
+- Commit visual baselines so CI catches regressions
+
+❌ **Don't:**
+- Hardcode test data or credentials
+- Rely on test execution order (keep tests independent)
+- Commit CSV files with sensitive test data
+- Use dynamic content (timestamps) in visual regression tests
+- Ignore timeout errors in CI/CD pipelines
 
 ## Next Steps
 
-- Configure a test environment URL via environment variables
-- Add pre-commit hooks to run tests before pushing
-- Expand API test coverage
-- Set up CI/CD pipeline with GitHub Actions or similar
-- Add performance testing (Lighthouse, etc.)
-- Document test scenarios and expected outcomes
+- Set up environment file with testmail.app credentials
+- Configure email code extraction pattern once email format is known
+- Expand E2E test coverage (product-flow and forgottenPassword-flow are templates)
+- Add data cleanup/archival for old CSV registrations
+- Integrate pre-commit hooks to run tests before pushing
+- Document additional test scenarios and expected outcomes
+- Monitor CI/CD pipeline performance and optimize worker count
 
-## Support
+## Dependencies
 
-For issues or questions, refer to:
-- [Playwright Documentation](https://playwright.dev)
-- [Practice Software Testing](https://practicesoftwaretesting.com/)
-- Project repository: https://github.com/Mishmich/Toolshop---Playwright
+- **@playwright/test** (^1.56.1) - Test framework
+- **@faker-js/faker** (^10.1.0) - Random test data generation
+- **axios** (^1.13.6) - HTTP client for email API
+- **mailslurp-client** (^16.0.0) - MailSlurp integration (not currently in use)
+- **dotenv** (^17.2.3) - Environment variable management
