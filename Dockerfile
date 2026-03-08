@@ -1,6 +1,26 @@
-FROM mcr.microsoft.com/playwright:v1.56.1-focal
+FROM node:lts
 
 WORKDIR /app
+
+# Install system dependencies for Playwright
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libnss3 \
+  libnspr4 \
+  libdbus-1-3 \
+  libatk1.0-0 \
+  libatk-bridge2.0-0 \
+  libcups2 \
+  libdrm2 \
+  libxkbcommon0 \
+  libpango-1.0-0 \
+  libpangocairo-1.0-0 \
+  libgbm1 \
+  libxrandr2 \
+  libxinerama1 \
+  libxi6 \
+  libxext6 \
+  libxfixes3 \
+  && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package*.json ./
@@ -9,12 +29,9 @@ COPY package*.json ./
 RUN npm ci
 
 # Install Playwright browsers
-RUN npx playwright install
+RUN npx playwright install --with-deps
 
 # Copy project files
 COPY . .
-
-# Set environment to skip browser download in container
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 ENTRYPOINT ["npm", "test"]
