@@ -2,8 +2,11 @@ FROM node:lts
 
 WORKDIR /app
 
-# Install system dependencies for Playwright
+# Install system dependencies for Playwright and Python
 RUN apt-get update && apt-get install -y --no-install-recommends \
+  python3 \
+  python3-venv \
+  python3-pip \
   libnss3 \
   libnspr4 \
   libdbus-1-3 \
