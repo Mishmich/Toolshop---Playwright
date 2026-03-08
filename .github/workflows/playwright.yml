@@ -3,6 +3,7 @@ on:
   schedule:
     - cron: '0 0 * * 0'  # Run every Sunday at midnight UTC
   workflow_dispatch:
+  push:
 permissions:
   contents: read
   checks: write
@@ -23,8 +24,14 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test /tests/contact.spec.ts
+      run: npx playwright test
       continue-on-error: true
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action/composite@v2
+      if: ${{ !cancelled() }}
+      with:
+        files: test-results/junit.xml
+        check_name: Playwright Test Results
     - name: Upload Playwright Report to GitHub Pages
       if: ${{ !cancelled() }}
       uses: actions/upload-pages-artifact@v3
