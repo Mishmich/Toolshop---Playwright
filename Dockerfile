@@ -1,13 +1,6 @@
-FROM node:lts-alpine
+FROM mcr.microsoft.com/playwright:v1.56.1-focal
 
 WORKDIR /app
-
-# Install system dependencies for Playwright
-RUN apk add --no-cache \
-  chromium \
-  firefox \
-  webkit \
-  tzdata
 
 # Copy package files
 COPY package*.json ./
@@ -15,7 +8,7 @@ COPY package*.json ./
 # Install npm dependencies
 RUN npm ci
 
-# Install Playwright browsers (already available via system packages above)
+# Install Playwright browsers
 RUN npx playwright install
 
 # Copy project files
