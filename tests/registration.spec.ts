@@ -6,7 +6,7 @@ test.beforeEach(async ({page, baseURL}) => {
     await page.goto(`${baseURL}/auth/register`);
 });
 
-test('Register a client with valid data', { tag: '@positive'}, async ({page}) => {
+test('Register a client with valid data', { tag: ['@positive', '@smoke'] }, async ({page}) => {
     await registration.fillRegistrationForm(page);
     await registration.clickOnSubmitButton(page);
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/auth/login');

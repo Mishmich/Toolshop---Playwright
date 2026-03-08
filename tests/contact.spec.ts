@@ -7,7 +7,7 @@ test.beforeEach(async ({page, baseURL}) => {
     await page.goto(`${baseURL}/contact`);
 });
 
-test('Submit fully filled out contact form', { tag: '@positive'} , async ({page}) => {
+test('Submit fully filled out contact form', { tag: ['@positive', '@smoke'] }, async ({page}) => {
     await contact.fillOutContactForm(page);
     await contact.submitContactForm(page);
     await contact.checkSubmissionText(page);

@@ -7,7 +7,7 @@ test.describe("Unauthorized user tests", () => {
     await page.goto(`${baseURL}/`);
     await productDetail.goToProductDetail(page, baseURL!, 0); // Navigate to the first product detail page
   });
-  test("Add item to cart", async ({ page }) => {
+  test("Add item to cart", { tag: '@smoke' }, async ({ page }) => {
     await productDetail.addItemsToCart(page);
     await productDetail.checkProductAddedAlert(page);
   });

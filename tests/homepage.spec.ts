@@ -12,7 +12,7 @@ describe("Navbar Tests", () => {
     await expect(page).toHaveURL(`${baseURL}/`);
   });
 
-  test("Click on Home", async ({ page, baseURL }) => {
+  test("Click on Home", { tag: '@smoke' }, async ({ page, baseURL }) => {
     await page.locator('[data-test="nav-home"]').click();
     await expect(page).toHaveURL(`${baseURL}/`);
   });
