@@ -34,7 +34,6 @@ export default defineConfig({
       slowMo: 500,
     },*/
   },
-
   /* Configure projects for major browsers */
   projects: [
     {
@@ -43,6 +42,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         baseURL: 'https://practicesoftwaretesting.com',
       },
+      snapshotDir: 'tests/UI/__snapshots__/production',
     },
     {
       name: 'chromium-buggy',
@@ -50,6 +50,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         baseURL: 'https://with-bugs.practicesoftwaretesting.com/#',
       },
+      snapshotDir: 'tests/UI/__snapshots__/buggy',
     },
 
     /* Test against mobile viewports. */
