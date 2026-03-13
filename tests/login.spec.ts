@@ -8,6 +8,8 @@ test.beforeEach(async ({page, baseURL}) => {
 test('Sign in with valid credentials', { tag: ['@positive', '@smoke'] }, async ({page}) => {
     await login.fillOutSignInForm(page, login.user1);
     await login.submitSignInForm(page);
+    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
     await login.checkSignInProfileName(page, login.user1);
 });
 
