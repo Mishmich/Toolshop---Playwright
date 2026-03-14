@@ -51,10 +51,26 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v4
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Install Playwright browsers
-      run: npx playwright install
+    - name: Get Playwright version
+      id: playwright-version
+      run: |
+        npm ci
+        PLAYWRIGHT_VERSION=$(npm ls --json @playwright/test | jq --raw-output '.dependencies["@playwright/test"].version')
+        echo "version=$PLAYWRIGHT_VERSION" >> $GITHUB_OUTPUT
+    - name: Cache Playwright browsers
+      uses: actions/cache@v3
+      id: playwright-cache
+      with:
+        path: "~/.cache/ms-playwright"
+        key: "${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}"
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+    - name: Install Playwright browsers & OS dependencies
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install --with-deps
+    - name: Install Playwright OS dependencies
+      if: steps.playwright-cache.outputs.cache-hit == 'true'
+      run: npx playwright install-deps
     - name: Run Playwright tests - Smoke (push only)
       if: ${{ github.event_name == 'push' }}
       run: npx playwright test --grep '@smoke'
