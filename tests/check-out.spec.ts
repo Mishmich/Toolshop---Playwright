@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import * as checkout from "./pages/Checkout.ts";
 import { loginUser, user1 } from "./pages/Login.ts";
+import { slowTest } from "./fixtures/slowTest.ts";
 
 test.describe("Unauthorized user tests", () => {
   test.beforeEach(async ({ page, baseURL }) => {
@@ -41,15 +42,15 @@ test.describe("Unauthorized user tests", () => {
   });
 });
 
-test.describe("Authorized user tests", () => {
-  test.beforeEach(async ({ page, baseURL }) => {
-    await loginUser(page, baseURL!);
-    await checkout.addProductToCart(page, baseURL!, 0, 2);
-    await checkout.clickOnCartIcon(page);
+slowTest.describe("Authorized user tests", () => {
+  slowTest.beforeEach(async ({ slowPage, baseURL }) => {
+    await loginUser(slowPage, baseURL!);
+    await checkout.addProductToCart(slowPage, baseURL!, 0, 2);
+    await checkout.clickOnCartIcon(slowPage);
   });
 
-  test("Proceed to checkout - authenticated", {tag: "@smoke"}, async ({ page }) => {
-    await page.getByRole("button", { name: "Proceed to checkout" }).click();
-    await expect(page.locator("p.ng-star-inserted")).toContainText(`Hello ${user1.firstName} ${user1.lastName}, you are already logged in. You can proceed to checkout.`);
+  slowTest("Proceed to checkout - authenticated", {tag: "@smoke"}, async ({ slowPage }) => {
+    await slowPage.getByRole("button", { name: "Proceed to checkout" }).click();
+    await expect(slowPage.locator("p.ng-star-inserted")).toContainText(`Hello ${user1.firstName} ${user1.lastName}, you are already logged in. You can proceed to checkout.`);
   });
 });

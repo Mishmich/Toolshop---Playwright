@@ -9,14 +9,10 @@ test.beforeEach(async ({ page, baseURL }) => {
 test(
   "Register a client with valid data",
   { tag: ["@positive", "@smoke"] },
-  async ({ page }) => {
+  async ({ page, baseURL }) => {
     await registration.fillRegistrationForm(page);
-    await page.waitForTimeout(1000);
     await registration.clickOnSubmitButton(page);
-    await page.waitForTimeout(1000);
-    await expect(page).toHaveURL(
-      "https://practicesoftwaretesting.com/auth/login",
-    );
+    await page.waitForURL(`${baseURL}/auth/login`);
   },
 );
 
