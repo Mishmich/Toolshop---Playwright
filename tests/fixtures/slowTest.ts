@@ -10,3 +10,5 @@ export const slowTest = base.extend<{ slowPage: Page }>({
     await browser.close();
   },
 });
+
+// add slowPage fixture
