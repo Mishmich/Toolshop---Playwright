@@ -1,11 +1,11 @@
 import { Page, expect } from "@playwright/test";
 
 export const testValues = {
-  first_name: "John",
-  last_name: "Doe",
-  email: "john.doe@gmail.com",
-  subject: "status-of-order",
-  message: "I would like to know more about your product range.",
+  first_name: process.env.TEST_CONTACT_FIRST_NAME!,
+  last_name: process.env.TEST_CONTACT_LAST_NAME!,
+  email: process.env.TEST_CONTACT_EMAIL!,
+  subject: process.env.TEST_CONTACT_SUBJECT!,
+  message: process.env.TEST_CONTACT_MESSAGE!,
 };
 
 export async function fillOutContactForm(page: Page) {

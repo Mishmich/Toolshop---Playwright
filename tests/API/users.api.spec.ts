@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('User API', () => {
-  const API_BASE_URL = 'https://api.practicesoftwaretesting.com';
-  const validEmail = "customer@practicesoftwaretesting.com";
-  const validPassword = "welcome01";
+  const API_BASE_URL = process.env.API_BASE_URL;
+  const validEmail = process.env.TEST_API_VALID_EMAIL;
+  const validPassword = process.env.TEST_API_VALID_PASSWORD;
 
   test('POST /api/auth/login - Valid credentials', async ({ request }) => {
     const response = await request.post(`${API_BASE_URL}/users/login`, {

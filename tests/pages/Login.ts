@@ -1,15 +1,16 @@
 import { Page, expect } from "@playwright/test";
 
 export const user1 = {
-    firstName: 'Bob',
-    lastName: 'Smith',
-    email: 'customer3@practicesoftwaretesting.com',
-    password: 'pass123'
+    firstName: process.env.TEST_USER1_FIRST_NAME!,
+    lastName: process.env.TEST_USER1_LAST_NAME!,
+    email: process.env.TEST_USER1_EMAIL!,
+    password: process.env.TEST_USER1_PASSWORD!,
 };
 
+
 export const user2 = {
-    email: 'customer@practicesoftwaretesting.com',
-    password: 'welcome00'
+    email: process.env.TEST_USER2_EMAIL!,
+    password: process.env.TEST_USER2_PASSWORD!
 };
 
 export async function fillOutSignInForm(page: Page, user: {email: string, password: string}) {
