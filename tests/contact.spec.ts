@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
-import * as contact from './pages/Contact.ts';
+import * as contact from './pages/Contact';
 import path from 'path';
-
 
 test.beforeEach(async ({page, baseURL}) => {
     await page.goto(`${baseURL}/contact`);
