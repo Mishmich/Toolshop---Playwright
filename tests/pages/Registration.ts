@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
-import { saveRegistration } from "../utils/CSV_append.ts";
-import * as faker from "../utils/RandomDataGen.ts"
+import { saveRegistration } from "../utils/CSV_append";
+import * as faker from "../utils/RandomDataGen"
 
 /**
  * Fills the registration form with valid data.
@@ -8,9 +8,9 @@ import * as faker from "../utils/RandomDataGen.ts"
  * so we cannot verify email confirmation.
  */
 
-export async function fillRegistrationForm(page: Page) {
+export async function fillRegistrationForm(page: Page, baseURL: string) {
   const testValues = await faker.getTestValues();
-  await page.goto("https://practicesoftwaretesting.com/auth/register");
+  await page.goto(`${baseURL}/auth/register`);
   await page.locator('[data-test="first-name"]').click();
   await page.locator('[data-test="first-name"]').fill(testValues.first_name);
   await page.locator('[data-test="last-name"]').click();
@@ -47,8 +47,8 @@ export async function clickOnSubmitButton(page: Page) {
 
 }
 
-export async function registerUserwithTestmail(page: Page, email: string) {
-    await fillRegistrationForm(page);
+export async function registerUserwithTestmail(page: Page, email: string, baseURL: string) {
+    await fillRegistrationForm(page, baseURL);
     await page.locator('[data-test="email"]').click();
     await page.locator('[data-test="email"]').fill(email);
     await clickOnSubmitButton(page);
