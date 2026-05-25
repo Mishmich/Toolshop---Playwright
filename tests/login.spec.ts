@@ -1,30 +1,30 @@
 import { test } from "@playwright/test";
-import * as login from "./pages/Login.ts";
-import { slowTest } from "./fixtures/slowTest.ts";
+import * as login from "./pages/Login";
+import { slowTest } from "./fixtures/slowTest";
 
 slowTest.describe("Slow login tests", () => {
-  slowTest.beforeEach(async ({ slowPage, baseURL }) => {
-    await slowPage.goto(`${baseURL}/auth/login`);
+  slowTest.beforeEach(async ({ page, baseURL }) => {
+    await page.goto(`${baseURL}/auth/login`);
   });
   slowTest(
     "Sign in with valid credentials",
     { tag: ["@positive", "@smoke"] },
-    async ({ slowPage }) => {
-      await login.fillOutSignInForm(slowPage, login.user1);
-      await login.submitSignInForm(slowPage);
-      await slowPage.waitForLoadState("networkidle");
-      await slowPage.waitForLoadState("domcontentloaded");
-      await login.checkSignInProfileName(slowPage, login.user1);
+    async ({ page }) => {
+      await login.fillOutSignInForm(page, login.user1);
+      await login.submitSignInForm(page);
+      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
+      await login.checkSignInProfileName(page, login.user1);
     },
   );
 
   slowTest(
     "Sign out after signing in",
     { tag: "@positive" },
-    async ({ slowPage, baseURL }) => {
-      await login.loginUser(slowPage, baseURL!);
-      await login.logOutUser(slowPage);
-      await login.checkUrlAfterLogOut(slowPage, baseURL!);
+    async ({ page, baseURL }) => {
+      await login.loginUser(page, baseURL!);
+      await login.logOutUser(page);
+      await login.checkUrlAfterLogOut(page, baseURL!);
     },
   );
 });
