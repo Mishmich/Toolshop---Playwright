@@ -12,11 +12,11 @@ RUN npm ci
 # Install Playwright browsers and dependencies
 RUN npx playwright install --with-deps
 
+# Copy project files
+COPY . .
+
 # Update snapshots
 RUN npx playwright test tests/UI --update-snapshots
 
-
-# Copy project files
-COPY . .
 
 ENTRYPOINT ["npm", "test"]
