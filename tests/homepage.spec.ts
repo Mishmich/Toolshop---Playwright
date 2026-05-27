@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { describe } from "node:test";
-import * as home from "./pages/Home.ts";
+import * as home from "./pages/Home";
 
 test.beforeEach(async ({ page, baseURL }) => {
   await page.goto(`${baseURL}/`);

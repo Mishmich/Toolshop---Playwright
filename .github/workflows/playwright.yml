@@ -50,22 +50,6 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v4
-    - name: Cache Playwright browsers
-      uses: actions/cache@v3
-      id: playwright-cache
-      with:
-        path: "~/.cache/ms-playwright"
-        key: "${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}"
-        restore-keys: |
-          ${{ runner.os }}-playwright-
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Install Playwright browsers & OS dependencies
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install --with-deps
-    - name: Install Playwright OS dependencies
-      if: steps.playwright-cache.outputs.cache-hit == 'true'
-      run: npx playwright install-deps
     - name: Run Playwright tests - Smoke (push only)
       if: ${{ github.event_name == 'push' }}
       run: npx playwright test --grep '@smoke'
