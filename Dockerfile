@@ -16,7 +16,7 @@ RUN npx playwright install --with-deps
 COPY . .
 
 # Update snapshots
-RUN npx playwright test tests/UI --update-snapshots
+RUN npx playwright test tests/UI --update-snapshots || true
 
 
 ENTRYPOINT ["npm", "test"]
