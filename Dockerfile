@@ -13,7 +13,7 @@ RUN npm ci
 RUN npx playwright install --with-deps
 
 # Update snapshots
-RUN npx playwright test --update-snapshots
+RUN npx playwright test tests/UI --update-snapshots
 
 
 # Copy project files
