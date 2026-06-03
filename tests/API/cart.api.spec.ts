@@ -22,15 +22,17 @@ test.describe("Cart API", () => {
     // Create a cart
     const [cartResponse, cartBody] = await createCart(API_BASE_URL, request);
     const cartId = cartBody.id;
-    // Add a product to the cart
+    const list = await request.get(`${API_BASE_URL}/products`);
+    const firstId = (await list.json()).data[0].id;
+    const response = await request.get(`${API_BASE_URL}/products/${firstId}`); // Add a product to the cart
     const addProductResponse = await request.post(
       `${API_BASE_URL}/carts/${cartId}`,
       {
         data: {
-        "product_id": "01KGZDE9E58HTZSYG5ZJZPHRJK",
-        "quantity": 1
-        }
-      }
+          product_id: firstId,
+          quantity: 1,
+        },
+      },
     );
     expect(addProductResponse.status()).toBeLessThanOrEqual(201);
   });
