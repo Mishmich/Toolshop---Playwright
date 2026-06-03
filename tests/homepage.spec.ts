@@ -70,7 +70,7 @@ describe("Sorting Tests", () => {
     const products = await home.getProductDetails(page);
     const sortedProducts = [...products];
     sortedProducts.sort((a, b) => (a.price! < b.price! ? 1 : -1));
-    expect(sortedProducts).toEqual(products);
+    await expect(sortedProducts).toEqual(products);
   });
 });
 
@@ -81,7 +81,7 @@ describe("Filtering Tests", () => {
     await home.sortByOption(page, "price,desc");
     const products = await home.getProductDetails(page);
     console.log(products[0].price!.slice(1));
-    expect(products[0].price!.slice(1) <= "50").toBeTruthy();
+    expect(Number(products[0].price!.slice(1))).toBeLessThanOrEqual(50);
   });
 
   test("Filter by price range 100-200", async ({ page }) => {
@@ -89,7 +89,8 @@ describe("Filtering Tests", () => {
     await home.moveSliderTo(page, "right", 200);
     await home.sortByOption(page, "price,asc");
     const products = await home.getProductDetails(page);
-    expect(products[0].price!.slice(1) >= "100" && products[products.length - 1].price!.slice(1) <= "200").toBeTruthy();
+    expect(Number(products[0].price!.slice(1))).toBeGreaterThanOrEqual(100);
+    expect(Number(products[products.length - 1].price!.slice(1))).toBeLessThanOrEqual(200);
   });
 
   test("Search by text - 'hammer'", async ({ page }) => {
@@ -109,7 +110,7 @@ describe("Filtering Tests", () => {
     const products = await home.getProductDetails(page);
     for (const product of products) {
       expect(product.name!.toLowerCase().includes("our")).toBeTruthy();
-      expect(product.price!.slice(1) <= "30").toBeTruthy();
+      expect(Number(product.price!.slice(1))).toBeLessThanOrEqual(30);
     }
   });
 });
