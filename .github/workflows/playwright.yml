@@ -58,18 +58,42 @@ jobs:
       if: ${{ github.event_name != 'push' }}
       run: npx playwright test
       continue-on-error: true
+    - name: Check for junit report
+      id: check_junit
+      run: |
+        if [ -f "test-results/junit.xml" ]; then
+          echo "found=true" >> $GITHUB_OUTPUT
+        else
+          echo "found=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/composite@v2
-      if: ${{ !cancelled() }}
+      if: ${{ !cancelled() && steps.check_junit.outputs.found == 'true' }}
       with:
         files: test-results/junit.xml
         check_name: Playwright Test Results
+    - name: Show report directories (diagnostic)
+      run: |
+        echo "Workspace listing for diagnostics:";
+        pwd;
+        echo "playwright-report contents:"; ls -la playwright-report || true;
+        echo "test-results contents:"; ls -la test-results || true;
+
+    - name: Check for Playwright HTML report
+      id: check_html_report
+      run: |
+        if [ -d "playwright-report" ]; then
+          echo "found=true" >> $GITHUB_OUTPUT
+        else
+          echo "found=false" >> $GITHUB_OUTPUT
+        fi
     - name: Upload Playwright Report to GitHub Pages
-      if: ${{ !cancelled() }}
+      if: ${{ !cancelled() && steps.check_html_report.outputs.found == 'true' }}
       uses: actions/upload-pages-artifact@v3
       with:
         path: playwright-report/
     - name: Deploy to GitHub Pages
-      if: ${{ !cancelled() }}
+      if: ${{ !cancelled() && steps.check_html_report.outputs.found == 'true' }}
       id: deployment
       uses: actions/deploy-pages@v4
