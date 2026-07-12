@@ -81,8 +81,28 @@ jobs:
           ls -la playwright-report || true
           echo "test-results contents:"
           ls -la test-results || true
+      - name: Prepare GitHub Pages artifact
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p playwright-report
+          if [ ! -f "playwright-report/index.html" ]; then
+            cat > playwright-report/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <title>Playwright Report</title>
+            </head>
+            <body>
+              <h1>Playwright Report</h1>
+              <p>No HTML report was generated for this run.</p>
+            </body>
+          </html>
+          EOF
+          fi
       - name: Upload Playwright Report to GitHub Pages
-        if: ${{ !cancelled() && hashFiles('playwright-report/**') != '' }}
+        if: ${{ !cancelled() }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: playwright-report/
