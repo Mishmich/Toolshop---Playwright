@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
-import * as checkout from "./pages/Checkout.ts";
-import { loginUser, user1 } from "./pages/Login.ts";
-import { slowTest } from "./fixtures/slowTest.ts";
+import * as checkout from "./pages/Checkout";
+import { loginUser, user1 } from "./pages/Login";
+import { slowTest } from "./fixtures/slowTest";
 
 test.describe("Unauthorized user tests", () => {
   test.beforeEach(async ({ page, baseURL }) => {
