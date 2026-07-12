@@ -48,7 +48,6 @@ c:\Data\pst_PW_test\
 ├── playwright.config.ts            # Main Playwright configuration
 ├── playwright-report/              # HTML test reports
 ├── test-results/
-│   └── junit.xml                   # JUnit format results
 ├── package.json
 └── README.md
 ```
@@ -63,7 +62,7 @@ c:\Data\pst_PW_test\
 - **Email Integration**: testmail.app support for email-based workflows with code extraction
 - **Test Data Generation**: Faker.js for realistic random test data
 - **CSV Logging**: Automatic registration data persistence for audit trails
-- **CI/CD Ready**: GitHub Actions workflow with JUnit and HTML reporting
+- **CI/CD Ready**: GitHub Actions workflow with HTML and GitHub reporting
 
 ## Installation
 
@@ -257,7 +256,7 @@ GitHub Actions workflow (`.github/workflows/playwright.yml`) runs tests on:
 - Runs on Windows latest
 - Parallel execution (4 workers locally, 1 on CI)
 - Automatic retry on CI (2 retries)
-- HTML, GitHub, and JUnit reports
+- HTML and GitHub reports
 - Deployed to GitHub Pages
 
 ### Configuration:
@@ -283,7 +282,6 @@ on:
 **Reporters:**
 - HTML (default)
 - GitHub (for CI)
-- JUnit (test-results/junit.xml)
 
 **Parallel Execution:**
 - Local: 4 workers (fullyParallel: true)
