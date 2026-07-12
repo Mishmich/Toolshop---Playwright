@@ -8,5 +8,7 @@ node_modules/
 /playwright/.auth/
 .env
 /.vscode/
-/scripts/
+/scripts/*
+!/scripts/
+!/scripts/generate-snapshots.mjs
 /tests/data/registrations.csv

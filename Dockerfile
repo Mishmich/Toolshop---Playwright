@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.48.1-jammy
+FROM mcr.microsoft.com/playwright:v1.56.1-jammy
 
 # Install display server and fonts for consistent screenshot rendering
 RUN apt-get update && apt-get install -y \

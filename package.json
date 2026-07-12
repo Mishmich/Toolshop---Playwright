@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:update-snapshots": "node scripts/generate-snapshots.mjs"
   },
   "keywords": [],
   "author": "",
