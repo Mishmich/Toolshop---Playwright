@@ -65,9 +65,9 @@ jobs:
           Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
           sleep 2
           echo "Display :99 started for consistent screenshot rendering"
-      - name: Run Playwright tests - Smoke (push only)
+      - name: Run Playwright tests - UI folder (push only)
         if: ${{ github.event_name == 'push' }}
-        run: npm test -- --grep '@smoke'
+        run: npx playwright test tests/UI
         continue-on-error: true
       - name: Run Playwright tests - Full suite (schedule & manual)
         if: ${{ github.event_name != 'push' }}
