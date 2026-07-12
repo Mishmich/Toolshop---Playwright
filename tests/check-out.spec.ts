@@ -42,15 +42,15 @@ test.describe("Unauthorized user tests", () => {
   });
 });
 
-slowTest.describe("Authorized user tests", () => {
-  slowTest.beforeEach(async ({ slowPage, baseURL }) => {
-    await loginUser(slowPage, baseURL!);
-    await checkout.addProductToCart(slowPage, baseURL!, 0, 2);
-    await checkout.clickOnCartIcon(slowPage);
+test.describe("Authorized user tests", () => {
+  slowTest.beforeEach(async ({ page, baseURL }) => {
+    await loginUser(page, baseURL!);
+    await checkout.addProductToCart(page, baseURL!, 0, 2);
+    await checkout.clickOnCartIcon(page);
   });
 
-  slowTest("Proceed to checkout - authenticated", {tag: "@smoke"}, async ({ slowPage }) => {
-    await slowPage.getByRole("button", { name: "Proceed to checkout" }).click();
-    await expect(slowPage.locator("p.ng-star-inserted")).toContainText(`Hello ${user1.firstName} ${user1.lastName}, you are already logged in. You can proceed to checkout.`);
+  test("Proceed to checkout - authenticated", {tag: "@smoke"}, async ({ page }) => {
+    await page.getByRole("button", { name: "Proceed to checkout" }).click();
+    await expect(page.locator("p.ng-star-inserted")).toContainText(`Hello ${user1.firstName} ${user1.lastName}, you are already logged in. You can proceed to checkout.`);
   });
 });
