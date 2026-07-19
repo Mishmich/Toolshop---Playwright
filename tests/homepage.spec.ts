@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { describe } from "node:test";
 import * as home from "./pages/Home";
+import { selectors } from './selectors';
 
 test.beforeEach(async ({ page, baseURL }) => {
   await page.goto(`${baseURL}/`);
@@ -13,29 +14,29 @@ describe("Navbar Tests", () => {
   });
 
   test("Click on Home", { tag: '@smoke' }, async ({ page, baseURL }) => {
-    await page.locator('[data-test="nav-home"]').click();
+    await page.locator(selectors.nav.home).click();
     await expect(page).toHaveURL(`${baseURL}/`);
   });
 
   test("Click on Categories - Hand Tools", async ({ page, baseURL }) => {
-    await page.locator('[data-test="nav-categories"]').click();
-    await page.locator('[data-test="nav-hand-tools"]').click();
+    await page.locator(selectors.nav.categories).click();
+    await page.locator(selectors.nav.handTools).click();
     await expect(page).toHaveURL(`${baseURL}/category/hand-tools`);
   });
 
   test("Click on Contact", async ({ page, baseURL }) => {
-    await page.locator('[data-test="nav-contact"]').click();
+    await page.locator(selectors.nav.contact).click();
     await expect(page).toHaveURL(`${baseURL}/contact`);
   });
 
   test("Click on Sign in", async ({ page, baseURL }) => {
-    await page.locator('[data-test="nav-sign-in"]').click();
+    await page.locator(selectors.nav.signIn).click();
     await expect(page).toHaveURL(`${baseURL}/auth/login`);
   });
 
   test("Click on Language - DE", async ({ page }) => {
-    await page.locator('[data-test="language-select"]').click();
-    await page.locator('[data-test="lang-de"]').click();
+    await page.locator(selectors.home.languageSelect).click();
+    await page.locator(selectors.home.langDe).click();
     await home.checkLanguageChange(page);
   });
 });
@@ -94,7 +95,7 @@ describe("Filtering Tests", () => {
   });
 
   test("Search by text - 'hammer'", async ({ page }) => {
-    await page.locator('[data-test="search-query"]').fill("hammer");
+    await page.locator(selectors.home.searchQuery).fill("hammer");
     await home.submitSearch(page);
     const products = await home.getProductDetails(page);
     for (const product of products) {
@@ -105,7 +106,7 @@ describe("Filtering Tests", () => {
   test("Combination of filtering - Hammer, range 0-30, 'our'", async ({page}) => {
     await page.getByRole('checkbox', { name: 'Hammer' }).check();
     await home.moveSliderTo(page, "right", 30);
-    await page.locator('[data-test="search-query"]').fill("our");
+    await page.locator(selectors.home.searchQuery).fill("our");
     await home.submitSearch(page);
     const products = await home.getProductDetails(page);
     for (const product of products) {

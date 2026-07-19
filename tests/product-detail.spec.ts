@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
-import * as productDetail from "./pages/ProductDetail.ts";
-import { loginUser, removeAllFaves } from "./pages/Login.ts";
+import { selectors } from './selectors';
+import * as productDetail from "./pages/ProductDetail";
+import { loginUser, removeAllFaves } from "./pages/Login";
 
 test.describe("Unauthorized user tests", () => {
   test.beforeEach(async ({ page, baseURL }) => {
@@ -16,7 +17,7 @@ test.describe("Unauthorized user tests", () => {
   test("Decrease item quantity", async ({ page }) => {
     await productDetail.increaseItemQuantity(page);
     await productDetail.decreaseItemQuantity(page);
-    const quantity = await page.locator('[data-test="quantity"]').inputValue();
+    const quantity = await page.locator(selectors.product.quantityInput).inputValue();
     expect(quantity).toBe("1");
     await productDetail.addItemsToCart(page);
     await productDetail.checkProductAddedAlert(page);

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { selectors } from './selectors';
 import * as registration from "./pages/Registration";
 import { user1 } from "./pages/Login";
 
@@ -21,7 +22,7 @@ test(
   { tag: "@negative" },
   async ({ page }) => {
     await registration.clickOnSubmitButton(page);
-    await expect(page.locator(".alert")).toHaveCount(11);
+    await expect(page.locator(selectors.common.alert)).toHaveCount(11);
   },
 );
 
@@ -30,33 +31,27 @@ test(
   { tag: "@negative" },
   async ({ page, baseURL }) => {
     await registration.fillRegistrationForm(page, baseURL!);
-    await page.locator('[data-test="email"]').click();
-    await page.locator('[data-test="email"]').fill(user1.email);
+    await page.locator(selectors.registration.email).click();
+    await page.locator(selectors.registration.email).fill(user1.email);
     await registration.clickOnSubmitButton(page);
-    await expect(page.locator(".alert")).toHaveText(
-      "A customer with this email address already exists.",
-    );
+    await expect(page.locator(selectors.common.alert)).toHaveText("Email already exists");
   },
 );
-
 test(
   "Register with invalid password",
   { tag: "@negative" },
   async ({ page, baseURL }) => {
     await registration.fillRegistrationForm(page, baseURL!);
-    await page.locator('[data-test="password"]').click();
-    await page.locator('[data-test="password"]').fill("pass123");
+    await page.locator(selectors.registration.password).click();
+    await page.locator(selectors.registration.password).fill("pass123");
     await registration.clickOnSubmitButton(page);
-    await expect(page.locator(".alert")).toHaveText(
-      " Password must be minimal 6 characters long.  Password must include invalid characters. ",
-    );
+    await expect(page.locator(selectors.common.alert)).toHaveText("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
   },
 );
-
 test("Make password visible", { tag: "@positive" }, async ({ page, baseURL }) => {
   await registration.fillRegistrationForm(page, baseURL!);
-  await page.locator('[data-test="password"]').fill("ValidPass123");
-  await page.locator("button.btn.btn-outline-secondary").click();
-  const passwordField = page.locator('[data-test="password"]');
+  await page.locator(selectors.registration.password).fill("ValidPass123");
+  await page.locator(selectors.registration.passwordRevealButton).click();
+  const passwordField = page.locator(selectors.registration.password);
   await expect(passwordField).toHaveAttribute("type", "text");
 });

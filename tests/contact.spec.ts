@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import * as contact from './pages/Contact';
+import { selectors } from './selectors';
 import path from 'path';
 
 test.beforeEach(async ({page, baseURL}) => {
@@ -20,7 +21,7 @@ test('Submit empty contact form', { tag: '@negative'}, async ({page, baseURL}) =
 
 test('Submit contact form with invalid email', { tag: '@negative'}, async ({page}) => {
     await contact.fillOutContactForm(page);
-    await page.locator('[data-test="email"]').fill('invalid-email');
+    await page.locator(selectors.contact.email).fill('invalid-email');
     await contact.submitContactForm(page);
     await contact.checkValidationErrors(page, ['email']);
 });

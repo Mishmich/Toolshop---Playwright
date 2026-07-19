@@ -1,4 +1,5 @@
 import { Page, expect } from "@playwright/test";
+import { selectors } from '../selectors';
 
 type navbar_links = Record<string, string>;
 
@@ -18,7 +19,7 @@ const navbar_links_DE: navbar_links = {
 
 export async function getProductId(page: Page, baseURL: string, index: number): Promise<string | null> {
   await page.goto(`${baseURL}/`);
-  const product = await page.locator('css=a.card').nth(index);
+  const product = await page.locator(selectors.home.productCard).nth(index);
   const productId = await product.getAttribute('data-test');
   const cleanedProductId = productId?.slice(8); // Remove 'product-' prefix
   return cleanedProductId!;
@@ -26,12 +27,12 @@ export async function getProductId(page: Page, baseURL: string, index: number): 
 
 export async function addItemToCart(page: Page, baseURL: string, productId: string) {
   await page.goto(`${baseURL}/product/${productId}`);
-  await page.locator('[data-test="add-to-cart"]').click();
+  await page.locator(selectors.product.addToCart).click();
 }
 
 export async function checkLanguageChange(page: Page) {
     for (const [heading, text] of Object.entries(navbar_links_DE)) {
-        const locator = page.locator(`[data-test="${heading}"]`);
+        const locator = page.locator(selectors.nav[heading as keyof typeof selectors.nav]);
         await expect(locator).toHaveText(text);
     }
 }
@@ -41,19 +42,19 @@ export async function clickOnNthPageNumber(page: Page, n: number) {
 }
 
 export async function sortByOption(page: Page, optionValue: string) {
-    await page.locator('[data-test="sort"]').selectOption(optionValue);
+    await page.locator(selectors.home.sortDropdown).selectOption(optionValue);
     await page.waitForLoadState("domcontentloaded");
 }
 
 export async function getProductDetails(page: Page): Promise<Product[]> {
     await page.waitForLoadState("domcontentloaded");
     await page.waitForLoadState("networkidle");
-    const products = await page.locator('css=a.card').all();
+    const products = await page.locator(selectors.home.productCard).all();
     return Promise.all(
     products.map(async (card) => ({
       id: (await card.getAttribute('data-test')) || '',
-      name: await card.locator('css=.card-title').textContent(),
-      price: await card.locator('[data-test="product-price"]').textContent(),
+      name: await card.locator(selectors.home.cardTitle).textContent(),
+      price: await card.locator(selectors.home.productPrice).textContent(),
     }))
   );
 }
@@ -65,8 +66,8 @@ export async function moveSliderTo(page: Page, position: 'left' | 'right', targe
    * @param targetValue - The value to set the slider to (0-200)
    */
   const sliderHandle = position === 'left' 
-    ? page.locator('span.ngx-slider-pointer-min')
-    : page.locator('span.ngx-slider-pointer-max');
+    ? page.locator(selectors.home.sliderMinHandle)
+    : page.locator(selectors.home.sliderMaxHandle);
   
   // Get current value from aria-valuenow attribute
   const currentValueStr = await sliderHandle.getAttribute('aria-valuenow');
@@ -92,7 +93,7 @@ export async function moveSliderTo(page: Page, position: 'left' | 'right', targe
 }
 
 export async function submitSearch(page: Page) {
-  await page.locator('[data-test="search-submit"]').click();
+  await page.locator(selectors.home.searchSubmit).click();
   await page.waitForLoadState("domcontentloaded");
   await page.waitForLoadState("networkidle");
 }
