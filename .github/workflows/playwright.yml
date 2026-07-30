@@ -14,12 +14,11 @@ on:
 permissions:
   contents: read
   checks: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: github-pages
-  cancel-in-progress: true
+  # Serialize runs so two publishes never push to gh-pages at the same time.
+  group: gh-pages-publish
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -82,8 +81,6 @@ jobs:
         if: ${{ github.event_name != 'push' }}
         run: npm test
         continue-on-error: true
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
       - name: Show report directories (diagnostic)
         run: |
           echo "Workspace listing for diagnostics:"
@@ -112,22 +109,72 @@ jobs:
           </html>
           EOF
           fi
-      - name: Upload Playwright Report to GitHub Pages
+      - name: Upload Playwright report artifact
         if: ${{ !cancelled() }}
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: playwright-report
           path: playwright-report/
+          retention-days: 7
 
-  deploy-pages:
+  publish:
     needs: test
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Checkout repository (for the index generator script)
+        uses: actions/checkout@v4
+      - name: Download Playwright report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: new-report
+      - name: Publish report to gh-pages branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Sortable, traceable folder name: date_run-number(padded)_short-sha
+          RUN_NUM=$(printf "%06d" "${{ github.run_number }}")
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          RUN_DIR="$(date -u +%Y-%m-%d)_${RUN_NUM}_${SHORT_SHA}"
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          REMOTE="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+
+          # Clone the existing gh-pages branch, or start a fresh orphan branch.
+          rm -rf gh-pages
+          if git ls-remote --exit-code --heads "$REMOTE" gh-pages >/dev/null 2>&1; then
+            git clone --branch gh-pages --single-branch "$REMOTE" gh-pages
+          else
+            git clone "$REMOTE" gh-pages
+            cd gh-pages
+            git checkout --orphan gh-pages
+            git rm -rf . >/dev/null 2>&1 || true
+            cd ..
+          fi
+
+          # Drop this run's report into its own folder.
+          mkdir -p "gh-pages/runs/${RUN_DIR}"
+          cp -r new-report/. "gh-pages/runs/${RUN_DIR}/"
+
+          # Prune to the most recent 20 runs (oldest folders removed).
+          cd gh-pages/runs
+          ls -1 | sort | head -n -20 | while read -r old; do
+            echo "Pruning old report: $old"
+            rm -rf "$old"
+          done
+          cd ../..
+
+          # Regenerate the dashboard index and disable Jekyll processing.
+          node scripts/generate-report-index.mjs gh-pages
+          touch gh-pages/.nojekyll
+
+          cd gh-pages
+          git add -A
+          git commit -m "Report for run #${{ github.run_number }} (${RUN_DIR})" || echo "Nothing to commit"
+          git push origin gh-pages

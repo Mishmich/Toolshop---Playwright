@@ -11,4 +11,5 @@ node_modules/
 /scripts/*
 !/scripts/
 !/scripts/generate-snapshots.mjs
+!/scripts/generate-report-index.mjs
 /tests/data/registrations.csv
