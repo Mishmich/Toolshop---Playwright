@@ -26,5 +26,8 @@ RUN npx playwright install --with-deps
 # Copy project files
 COPY . .
 
-# Tests are run at runtime by generate-snapshots.mjs, not during build
-ENTRYPOINT ["npm", "test"]
+# No ENTRYPOINT/CMD: generate-snapshots.mjs always passes the full command
+# it wants to run (e.g. `npx playwright test tests/UI --update-snapshots`).
+# An ENTRYPOINT here would have `docker run` APPEND that command to it
+# instead of replacing it (e.g. `npm test npx playwright test ...`), which
+# npm silently mangles into a plain `npm test` run with no update flag.
